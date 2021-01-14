@@ -32,7 +32,7 @@ Run in **db-destination**(Slave 2):
 
 
 
-Test Insert / Update commands:
+Test Insert / Update commands in MASTER:
 
 *INSERT INTO customers (first_name, last_name, email) VALUES ('Timoteo', 'Soutello', 'tsoutello@gmail.com);*
 
