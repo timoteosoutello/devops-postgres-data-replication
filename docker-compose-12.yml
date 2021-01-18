@@ -1,0 +1,65 @@
+version: '3.9'
+services:
+  db-origin:
+    image: postgres:12
+    ports:
+      - "6000:5432"
+    networks:
+      - db-net
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+    volumes:
+        - ./postgresql_LOGICAL.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+  db-intermediate:
+    image: postgres:12
+    ports:
+      - "6001:5432"
+    networks:
+      - db-net
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+    depends_on:
+      - db-origin
+    volumes:
+        - ./postgresql_LOGICAL.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+
+  db-destination:
+    image: postgres:12
+    ports:
+      - "6002:5432"
+    networks:
+      - db-net
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=admin
+    depends_on:
+      - db-intermediate
+
+  pgadmin4:
+    image: dpage/pgadmin4:4.29
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "admin@com"
+      PGADMIN_DEFAULT_PASSWORD: "admin"
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "9898:80"
+    depends_on:
+      - db-origin
+      - db-intermediate
+      - db-destination
+    networks:
+      - db-net
+    links:
+      - "db-origin:db-origin"
+      - "db-destination:db-destination"
+      - "db-intermediate:db-intermediate"
+
+networks:
+  db-net:
+    driver: bridge
