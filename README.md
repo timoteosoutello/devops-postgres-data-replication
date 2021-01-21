@@ -7,7 +7,7 @@ Master/Slave Postgres Replication through logical method
 
 # HOW-TO Test
 
-Run in all instances:
+**WARNING**, run in all instances (Logical replical does not replicate DDL):
 
 *CREATE TABLE customers (*
   *id int GENERATED ALWAYS AS IDENTITY PRIMARY KEY,*
